@@ -1,82 +1,86 @@
-//console.log("js has been loaded");
+console.log("js has been loaded");
 
 const menuBtn = document.getElementById("menuBtn");
-const mobileMenu = document.getElementById("mobileMenu"); // Ensure IDs are correct
+const mobileMenu = document.getElementById("mobilemenu");
 const closeBtn = document.getElementById("closeBtn");
 
 menuBtn.addEventListener("click", function () {
-  console.log("clicked");
+  console.log("Menu button clicked");
   mobileMenu.classList.add("active");
 });
+
 closeBtn.addEventListener("click", function () {
   mobileMenu.classList.remove("active");
 });
 
-// const roomName = "Luxury King Room";
-// const roomPrice = 300;
-// const roomGuests = 2;
-// const roomDescription = "private king sized bed balcony";
+function renderProperties(properties) {
+  properties.forEach((room) => {
+    const roomArticle = document.createElement("article");
+    roomArticle.classList.add("room");
 
-// const room = {
-//     name:'luxery room',
-//     price: 300,
-//     guests: 2,
-//     description: "private king sized bed balcony",
-// };
+    const roomNameElement = document.createElement("h3");
+    roomNameElement.classList.add("room--name");
+    roomNameElement.textContent = room.name;
 
-const rooms = [
-  {
-    name: "Luxury Suite",
-    price: 200,
-    type: "Private Room",
-    guests: 2,
-    description:
-      "This is a luxury suite with a private bathroom and a king-size bed.",
-  },
-  {
-    name: "Standard Room",
-    price: 100,
-    type: "Shared Room",
-    guests: 4,
-    description:
-      "This is a standard room with a shared bathroom and two queen-size beds.",
-  },
-  {
-    name: "Economy Room",
-    price: 50,
-    type: "Shared Room",
-    guests: 6,
-    description:
-      "This is an economy room with a shared bathroom and three twin-size beds.",
-  },
-];
+    const roomDescriptionElement = document.createElement("p");
+    roomDescriptionElement.classList.add("room--description");
+    roomDescriptionElement.textContent = room.description;
 
-rooms.forEach((room) => {
-  const roomArticle = document.createElement("article");
-  roomArticle.classList.add("room");
+    const roomPriceElement = document.createElement("p");
+    roomPriceElement.textContent = `Price: ${room.price}`;
 
-  const roomNameElement = document.createElement("h3");
-  roomNameElement.classList.add("room--name");
-  roomNameElement.textContent = room.name;
+    const roomGuestsElement = document.createElement("p");
+    roomGuestsElement.textContent = `Guests: ${room.guests}`;
 
-  const roomPriceElement = document.createElement("p");
-  roomPriceElement.textContent = `Price: $${room.price}`;
+    roomArticle.appendChild(roomNameElement);
+    roomArticle.appendChild(roomDescriptionElement);
+    roomArticle.appendChild(roomPriceElement);
+    roomArticle.appendChild(roomGuestsElement);
 
-  const roomTypeElement = document.createElement("p");
-  roomTypeElement.textContent = `Type: ${room.type}`;
+    document.body.appendChild(roomArticle);
+  });
+}
 
-  const roomGuestsElement = document.createElement("p");
-  roomGuestsElement.textContent = `Guests: ${room.guests}`;
+// fetch("/js/properties.json")
+//   .then((response) => {
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+//     return response.json();
+//   })
+//   .then((data) => {
+//     // Filter the properties to get only cabins if needed
+//     const cabins = data.filter((room) => room.type === "Cabin");
+//     // Render properties (change "cabins" to "data" to render all properties)
+//     renderProperties(cabins);
+//   })
+//   .catch((error) => {
+//     console.error("There was a problem fetching the properties data:", error);
+//   });
 
-  const roomDescriptionElement = document.createElement("p");
-  roomDescriptionElement.classList.add("room--description");
-  roomDescriptionElement.textContent = room.description;
+Promise.all([
+  // fetch 1
+  fetch("js/properties.json").then((response) => response.json()),
+  // fetch 2
+  fetch("js/categories.json").then((response) => response.json()),
+])
+  .then(([properties, categories]) => {
+    //console.log({properties});
+    //console.log({categories})
+    categories.forEach((category) => {
+      displayCategory(category, properties);
+    });
+  })
+  .catch((error) => {
+    console.error("There was a problem fetching the data:", error);
+  });
 
-  roomArticle.appendChild(roomNameElement);
-  roomArticle.appendChild(roomPriceElement);
-  roomArticle.appendChild(roomTypeElement);
-  roomArticle.appendChild(roomGuestsElement);
-  roomArticle.appendChild(roomDescriptionElement);
+const displayCategory = (category, properties) => {
+  //console.log("display category")
+  const sectionElement = document.createElement("section");
+  const sectionTitle = document.createElement("h2");
+  sectionTitle.textContent = category.label.plural;
 
-  document.body.appendChild(roomArticle);
-});
+  sectionElement.appendChild(sectionTitle);
+  document.body.appendChild(sectionElement);
+};
