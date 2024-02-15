@@ -41,32 +41,40 @@ function renderProperties(properties) {
   });
 }
 
-// fetch("/js/properties.json")
-//   .then((response) => {
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     return response.json();
-//   })
-//   .then((data) => {
-//     // Filter the properties to get only cabins if needed
-//     const cabins = data.filter((room) => room.type === "Cabin");
-//     // Render properties (change "cabins" to "data" to render all properties)
-//     renderProperties(cabins);
-//   })
-//   .catch((error) => {
-//     console.error("There was a problem fetching the properties data:", error);
-//   });
+const displayCategory = (category, properties) => {
+  const sectionElement = document.createElement("section");
+  const sectionTitle = document.createElement("h2");
+  sectionTitle.textContent = category.label.plural;
+  sectionElement.classList.add("category");
+  sectionElement.appendChild(sectionTitle);
+
+  const filteredProperties = properties.filter(
+    (property) => property.type === category.label.singular
+  );
+
+  filteredProperties.sort((a, b) => a.name.localeCompare(b.name));
+
+  filteredProperties.forEach((property) => {
+    const articleElement = document.createElement("article");
+    articleElement.classList.add("property");
+
+    let propertyHtml = `
+      <h3 class="property--title">${property.name}</h3>
+      <p class="property--description">${property.description}</p>
+      <p class="property--price">Price: ${property.price}</p>
+    `;
+    articleElement.innerHTML = propertyHtml;
+    sectionElement.appendChild(articleElement);
+  });
+
+  document.body.appendChild(sectionElement);
+};
 
 Promise.all([
-  // fetch 1
   fetch("js/properties.json").then((response) => response.json()),
-  // fetch 2
   fetch("js/categories.json").then((response) => response.json()),
 ])
   .then(([properties, categories]) => {
-    //console.log({properties});
-    //console.log({categories})
     categories.forEach((category) => {
       displayCategory(category, properties);
     });
@@ -74,13 +82,3 @@ Promise.all([
   .catch((error) => {
     console.error("There was a problem fetching the data:", error);
   });
-
-const displayCategory = (category, properties) => {
-  //console.log("display category")
-  const sectionElement = document.createElement("section");
-  const sectionTitle = document.createElement("h2");
-  sectionTitle.textContent = category.label.plural;
-
-  sectionElement.appendChild(sectionTitle);
-  document.body.appendChild(sectionElement);
-};
