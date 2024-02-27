@@ -3,6 +3,7 @@ console.log("js has been loaded");
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenu = document.getElementById("mobilemenu");
 const closeBtn = document.getElementById("closeBtn");
+const contentDiv = document.getElementById("content");
 
 menuBtn.addEventListener("click", function () {
   console.log("Menu button clicked");
@@ -67,7 +68,7 @@ const displayCategory = (category, properties) => {
     sectionElement.appendChild(articleElement);
   });
 
-  document.body.appendChild(sectionElement);
+  contentDiv.appendChild(sectionElement);
 };
 
 Promise.all([
